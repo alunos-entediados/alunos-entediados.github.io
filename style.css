@@ -1,0 +1,99 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+#minecraft #icon{
+    background-image: url(https://cdn2.steamgriddb.com/grid/6a482b51565ccaf7fdf9d0c9293d06a1.png);
+}
+#minecraft{
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), 
+            url(https://cdn2.steamgriddb.com/hero/ecd812da02543c0269cfc2c56ab3c3c0.png);
+    background-size: cover;
+    background-position: center;
+}
+#rise_of_the_half_moon #icon{
+    background-image: url(https://cdn.discordapp.com/attachments/982347291631419494/1549148548233166908/Captura_de_tela_20260914_165656.png?ex=6aa9a483&is=6aa85303&hm=3b30e4f3caa035d5f693e9f1102305e6a2be6701d87d9cdad9acf47c3fbea6a4);
+}
+#rise_of_the_half_moon{
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4)), 
+            url(https://cdn.discordapp.com/attachments/982347291631419494/1549152495333285958/Captura_de_tela_20260914_165700.png?ex=6aa9a830&is=6aa856b0&hm=c7d6841aedbb39b172e97f3d462fcaea8f03f7d8c701c9d43928532e05f95a12);
+    background-size: cover;
+    background-position: center;
+}
+
+body{
+    color: #fff;
+    background-color: #000;
+    font-family: sans-serif;
+}
+
+#links{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card_link{
+    width: 1122px;
+    margin: 20px;
+    display: flex;
+    border: 1px solid #fff;
+    box-shadow: #fff 10px 10px 0px,
+                #fff 9px 9px 0px,
+                #fff 8px 8px 0px,
+                #fff 7px 7px 0px,
+                #fff 6px 6px 0px,
+                #fff 5px 5px 0px,
+                #fff 4px 4px 0px,
+                #fff 3px 3px 0px,
+                #fff 2px 2px 0px,
+                #fff 1px 1px 0px;
+    background-size: cover;
+    background-position: center;
+}
+
+.card_link #icon{
+    height: 250px;
+    width: 350px;
+    flex-shrink: 0;
+    background-size: cover;
+    background-position: center;
+    margin: 10px;
+    border-radius: 20px;
+    border: 1px solid #fff;
+    box-shadow: #ffffff 0px 0px 5px;
+}
+
+.info{
+    padding: 10px;
+}
+
+.nome{
+    font-size: 40px;
+}
+
+.dscr{
+    margin-top: 10px;
+}
+
+@media (max-width: 1400px) {
+    .card_link{
+        width: 80%;
+    }
+}
+
+@media (max-width: 700px) {
+    .card_link{
+        width: 95%;
+    }
+}
+
+@media (max-width: 630px) {
+    .card_link{
+        width: 95%;
+    }
+    .card_link #icon{
+        display: none;
+    }
+}
