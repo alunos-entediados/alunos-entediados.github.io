@@ -5,11 +5,15 @@ let card_link = document.querySelectorAll(".card_link");
 // Links:
 
 let minecraft = document.querySelector("#minecraft");
+let gtavc = document.querySelector("#gtavc");
 let rise_of_the_half_moon = document.querySelector("#rise_of_the_half_moon");
 
 minecraft.onclick = function(e){
     window.open("https://eaglercraft.com/play?version=1.8.8", "_blank");
 };
+gtavc.onclick = function(e){
+    window.open("https://gtavc.armdev.cn/", "_blank");
+}
 rise_of_the_half_moon.onclick = function(e){
     window.open("https://doodles.google/doodle/rise-of-the-half-moon-may/", "_blank");
 };
