@@ -3,23 +3,26 @@
     padding: 0;
 }
 
-#minecraft #icon{
-    background-image: url(https://cdn2.steamgriddb.com/grid/6a482b51565ccaf7fdf9d0c9293d06a1.png);
+#minecraft .icon{
+    background-image: url(https://cdn2.steamgriddb.com/logo_thumb/90915208c601cc8c86ad01250ee90c12.png);
 }
 #minecraft{
     background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), 
             url(https://cdn2.steamgriddb.com/hero/ecd812da02543c0269cfc2c56ab3c3c0.png);
-    background-size: cover;
-    background-position: center;
 }
-#rise_of_the_half_moon #icon{
-    background-image: url(https://cdn.discordapp.com/attachments/982347291631419494/1549148548233166908/Captura_de_tela_20260914_165656.png?ex=6aa9a483&is=6aa85303&hm=3b30e4f3caa035d5f693e9f1102305e6a2be6701d87d9cdad9acf47c3fbea6a4);
+#gtavc .icon{
+    background-image: url(https://cdn2.steamgriddb.com/logo_thumb/a60c71bd110ebc4d6916e16b8ca24fda.png);
+}
+#gtavc{
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
+            url(https://cdn2.steamgriddb.com/hero_thumb/75291728e2d8458a104b6abd0b062b70.jpg);
+}
+#rise_of_the_half_moon .icon{
+    background-image: url(https://www.gstatic.com/delight/funbox/arcade/thumbnail_halfmoon.webp);
 }
 #rise_of_the_half_moon{
-    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4)), 
-            url(https://cdn.discordapp.com/attachments/982347291631419494/1549152495333285958/Captura_de_tela_20260914_165700.png?ex=6aa9a830&is=6aa856b0&hm=c7d6841aedbb39b172e97f3d462fcaea8f03f7d8c701c9d43928532e05f95a12);
-    background-size: cover;
-    background-position: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), 
+            url(img/half_moon_desktop.png);
 }
 
 body{
@@ -37,7 +40,6 @@ body{
 .card_link{
     width: 1122px;
     margin: 20px;
-    display: flex;
     border: 1px solid #fff;
     box-shadow: #fff 10px 10px 0px,
                 #fff 9px 9px 0px,
@@ -49,32 +51,18 @@ body{
                 #fff 3px 3px 0px,
                 #fff 2px 2px 0px,
                 #fff 1px 1px 0px;
-    background-size: cover;
-    background-position: center;
+    background-size: cover !important;
+    background-position: center !important; 
 }
 
-.card_link #icon{
+.card_link .icon{
     height: 250px;
     width: 350px;
     flex-shrink: 0;
-    background-size: cover;
+    margin: 20px 20px 20px 80px;
+    background-repeat: no-repeat;
     background-position: center;
-    margin: 10px;
-    border-radius: 20px;
-    border: 1px solid #fff;
-    box-shadow: #ffffff 0px 0px 5px;
-}
-
-.info{
-    padding: 10px;
-}
-
-.nome{
-    font-size: 40px;
-}
-
-.dscr{
-    margin-top: 10px;
+    background-size: contain;
 }
 
 @media (max-width: 1400px) {
@@ -85,15 +73,12 @@ body{
 
 @media (max-width: 700px) {
     .card_link{
-        width: 95%;
+        width: 93%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
-}
-
-@media (max-width: 630px) {
-    .card_link{
-        width: 95%;
-    }
-    .card_link #icon{
-        display: none;
+    .card_link .icon{
+        margin: 20px;
     }
 }
