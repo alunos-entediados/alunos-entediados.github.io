@@ -9,6 +9,7 @@ let gtavc = document.querySelector("#gtavc");
 let rise_of_the_half_moon = document.querySelector("#rise_of_the_half_moon");
 let neal_fun = document.querySelector("#neal_fun");
 let geoguessr = document.querySelector("#geoguessr");
+let sfex2 = document.querySelector("#sfex2");
 
 minecraft.onclick = function(e){
     window.open("https://eaglercraft.com/play?version=1.8.8", "_blank");
@@ -25,7 +26,9 @@ neal_fun.onclick = function(e){
 geoguessr.onclick = function(e){
     window.open("https://www.geoguessr.com/pt")
 }
-
+sfex2.onclick = function(e){
+    window.open("https://archive.org/details/arcade_sfex2#")
+}
 
 card_link.forEach(elemento => {
     elemento.addEventListener('mouseenter', () => {
