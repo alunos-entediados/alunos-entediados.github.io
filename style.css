@@ -24,7 +24,19 @@
     background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), 
             url(img/half_moon_desktop.png);
 }
-
+#neal_fun .icon{
+    background-image: url(img/neal_fun_logo.png);
+}
+#neal_fun{
+    background: linear-gradient(rgb(212, 212, 212), rgb(133, 133, 133));
+}
+#geoguessr .icon{
+    background-image: url(https://cdn2.steamgriddb.com/logo/11889e1b274e30490b5bf6d255042b26.png);
+}
+#geoguessr{
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)), 
+            url(https://cdn2.steamgriddb.com/hero/67c9851b0100e3bae408fb8525ce0935.png);
+}
 body{
     color: #fff;
     background-color: #000;

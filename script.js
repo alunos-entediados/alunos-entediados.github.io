@@ -7,6 +7,8 @@ let card_link = document.querySelectorAll(".card_link");
 let minecraft = document.querySelector("#minecraft");
 let gtavc = document.querySelector("#gtavc");
 let rise_of_the_half_moon = document.querySelector("#rise_of_the_half_moon");
+let neal_fun = document.querySelector("#neal_fun");
+let geoguessr = document.querySelector("#geoguessr");
 
 minecraft.onclick = function(e){
     window.open("https://eaglercraft.com/play?version=1.8.8", "_blank");
@@ -17,6 +19,13 @@ gtavc.onclick = function(e){
 rise_of_the_half_moon.onclick = function(e){
     window.open("https://doodles.google/doodle/rise-of-the-half-moon-may/", "_blank");
 };
+neal_fun.onclick = function(e){
+    window.open("https://neal.fun/")
+}
+geoguessr.onclick = function(e){
+    window.open("https://www.geoguessr.com/pt")
+}
+
 
 card_link.forEach(elemento => {
     elemento.addEventListener('mouseenter', () => {
