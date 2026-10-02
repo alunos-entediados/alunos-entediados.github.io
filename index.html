@@ -1,50 +1,49 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alunos entediados</title>
+
+    <title>Game Launcher</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <div id="links">
-        <div class="card_link" id="gtavc">
-            <div class="icon"></div>
-            <div class="ctgr">
-                <div class="jogo"></div>
+
+    <!-- Fundo do jogo selecionado -->
+    <div class="background"></div>
+
+    <main class="launcher">
+
+        <!-- Ícone do jogo selecionado -->
+        <div class="game-icon"></div>
+
+        <!-- Lista de jogos -->
+        <div class="game-list-container">
+
+            <div class="game-list">
+
+                <div class="game selected" data-game="minecraft">
+                    Minecraft
+                </div>
+                <div class="game" data-game="gtavc">
+                    Grand Theft Auto: Vice City
+                </div>
+                <div class="game" data-game="geoguessr">
+                    Geoguessr
+                </div>
+                <div class="game" data-game="sfex2">
+                    Street Fighter EX2
+                </div>
+
             </div>
+
         </div>
-        <div class="card_link" id="sfex2">
-            <div class="icon"></div>
-            <div class="ctgr">
-                <div class="jogo"></div>
-            </div>
-        </div>
-        <div class="card_link" id="minecraft">
-            <div class="icon"></div>
-            <div class="ctgr">
-                <div class="jogo"></div>
-            </div>
-        </div>
-        <div class="card_link" id="geoguessr">
-            <div class="icon"></div>
-            <div class="ctgr">
-                <div class="jogo"></div>
-            </div>
-        </div>
-        <div class="card_link" id="rise_of_the_half_moon">
-            <div class="icon"></div>
-            <div class="ctgr">
-                <div class="jogo"></div>
-            </div>
-        </div>
-        <div class="card_link" id="neal_fun">
-            <div class="icon"></div>
-            <div class="ctgr">
-                <div class="jogo"></div>
-            </div>
-        </div>
-    </div>
+
+    </main>
+
     <script src="script.js"></script>
+
 </body>
 </html>

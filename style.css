@@ -1,103 +1,317 @@
-*{
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-#minecraft .icon{
-    background-image: url(https://cdn2.steamgriddb.com/logo_thumb/90915208c601cc8c86ad01250ee90c12.png);
-}
-#minecraft{
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), 
-            url(https://cdn2.steamgriddb.com/hero/ecd812da02543c0269cfc2c56ab3c3c0.png);
-}
-#gtavc .icon{
-    background-image: url(https://cdn2.steamgriddb.com/logo_thumb/a60c71bd110ebc4d6916e16b8ca24fda.png);
-}
-#gtavc{
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
-            url(https://cdn2.steamgriddb.com/hero_thumb/75291728e2d8458a104b6abd0b062b70.jpg);
-}
-#rise_of_the_half_moon .icon{
-    background-image: url(https://www.gstatic.com/delight/funbox/arcade/thumbnail_halfmoon.webp);
-}
-#rise_of_the_half_moon{
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), 
-            url(img/half_moon_desktop.png);
-}
-#neal_fun .icon{
-    background-image: url(img/neal_fun_logo.png);
-}
-#neal_fun{
-    background: linear-gradient(rgb(212, 212, 212), rgb(133, 133, 133));
-}
-#geoguessr .icon{
-    background-image: url(https://cdn2.steamgriddb.com/logo/11889e1b274e30490b5bf6d255042b26.png);
-}
-#geoguessr{
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)), 
-            url(https://cdn2.steamgriddb.com/hero/67c9851b0100e3bae408fb8525ce0935.png);
-}
-#sfex2 .icon{
-    background-image: url(https://images.launchbox-app.com/65a38555-1798-4ad6-9695-59b42ef4ac0a.png);
-}
-#sfex2{
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)), 
-            url(https://cdn2.steamgriddb.com/hero/e97932e472c0d427a6cdbb91d5404241.png);
-}
-body{
-    color: #fff;
-    background-color: #000;
-    font-family: sans-serif;
+body {
+    width: 100vw;
+    height: 100vh;
+
+    overflow: hidden;
+
+    font-family: Arial, sans-serif;
+
+    color: white;
 }
 
-#links{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+
+/* =================================
+   FUNDO
+   ================================= */
+
+.background {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: -2;
+
+    transition: background-color 0.4s ease;
 }
 
-.card_link{
-    width: 1122px;
-    margin: 20px;
-    border: 1px solid #fff;
-    box-shadow: #fff 10px 10px 0px,
-                #fff 9px 9px 0px,
-                #fff 8px 8px 0px,
-                #fff 7px 7px 0px,
-                #fff 6px 6px 0px,
-                #fff 5px 5px 0px,
-                #fff 4px 4px 0px,
-                #fff 3px 3px 0px,
-                #fff 2px 2px 0px,
-                #fff 1px 1px 0px;
-    background-size: cover !important;
-    background-position: center !important; 
+
+.background::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 1) 0px,
+            rgba(0, 0, 0, 1) clamp(700px, 40vw, 800px),
+            rgba(0, 0, 0, 0.85) clamp(760px, 43vw, 860px),
+            rgba(0, 0, 0, 0.55) clamp(900px, 50vw, 1000px),
+            rgba(0, 0, 0, 0.2) clamp(1100px, 60vw, 1200px),
+            rgba(0, 0, 0, 0) clamp(1300px, 70vw, 1400px)
+        );
 }
 
-.card_link .icon{
-    height: 250px;
-    width: 350px;
-    flex-shrink: 0;
-    margin: 20px 20px 20px 80px;
-    background-repeat: no-repeat;
-    background-position: center;
+
+/* =================================
+   ÁREA PRINCIPAL
+   ================================= */
+
+.launcher {
+    width: 100%;
+    height: 100%;
+
+    position: relative;
+}
+
+
+/* =================================
+   ÍCONE DO JOGO
+   ================================= */
+
+.game-icon {
+    width: clamp(400px, 42vw, 640px);
+    height: clamp(180px, 17.5vw, 270px);
+
+    position: absolute;
+
+    left: clamp(20px, 2.5vw, 40px);
+
+    top: calc(25vh - clamp(90px, 8.75vw, 135px));
+
+    border-radius: clamp(12px, 1.6vw, 25px);
+
+    transition:
+        background-color 0.3s ease;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.5);
+
     background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
-@media (max-width: 1400px) {
-    .card_link{
-        width: 80%;
-    }
+
+/* =================================
+   ÁREA DA LISTA
+   ================================= */
+
+.game-list-container {
+    position: absolute;
+
+    left: clamp(20px, 2.5vw, 40px);
+    bottom: 0;
+
+    width: clamp(430px, 44.5vw, 680px);
+
+    height: 50vh;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-width: none;
 }
 
-@media (max-width: 700px) {
-    .card_link{
-        width: 93%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .card_link .icon{
-        margin: 20px;
-    }
+
+.game-list-container::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* =================================
+   DEGRADÊ SUPERIOR
+   ================================= */
+
+.game-list-container::before {
+    content: "";
+
+    position: sticky;
+
+    top: 0;
+    left: 0;
+
+    display: block;
+
+    width: 100%;
+    height: clamp(35px, 3.5vw, 50px);
+
+    margin-bottom: clamp(-50px, -3.5vw, -35px);
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.8),
+            transparent
+        );
+
+    z-index: 2;
+
+    pointer-events: none;
+}
+
+
+/* =================================
+   DEGRADÊ INFERIOR
+   ================================= */
+
+.game-list-container::after {
+    content: "";
+
+    position: sticky;
+
+    bottom: 0;
+    left: 0;
+
+    display: block;
+
+    width: 100%;
+    height: clamp(50px, 5vw, 70px);
+
+    margin-top: clamp(-70px, -5vw, -50px);
+
+    background:
+        linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.85),
+            transparent
+        );
+
+    z-index: 2;
+
+    pointer-events: none;
+}
+
+
+/* =================================
+   LISTA
+   ================================= */
+
+.game-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: clamp(6px, 0.65vw, 10px);
+
+    padding:
+        clamp(35px, 3.5vw, 50px)
+        0
+        clamp(50px, 5vw, 70px)
+        0;
+}
+
+
+/* =================================
+   JOGOS
+   ================================= */
+
+.game {
+    flex-shrink: 0;
+
+    width: clamp(400px, 42vw, 640px);
+
+    min-height: clamp(50px, 4.5vw, 65px);
+
+    padding:
+        clamp(10px, 1vw, 14px)
+        clamp(20px, 2vw, 30px);
+
+    display: flex;
+
+    align-items: center;
+
+    border-radius: clamp(7px, 0.7vw, 10px);
+
+    font-size: clamp(20px, 2vw, 30px);
+
+    font-weight: bold;
+
+    color: rgba(255, 255, 255, 0.5);
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.game:hover {
+    color: white;
+
+    background-color:
+        rgba(255, 255, 255, 0.08);
+}
+
+
+.game.selected {
+    color: white;
+
+    background-color:
+        rgba(255, 255, 255, 0.18);
+
+    transform:
+        translateX(clamp(5px, 0.65vw, 10px));
+}
+
+
+/* =================================
+   CORES DOS FUNDOS
+   ================================= */
+
+.background.minecraft {
+    background-image: url("https://cdn2.steamgriddb.com/hero/55d7bfc270b101f7ce074ae6396e54f5.png");
+    background-size: cover;
+    background-position: 20% center;
+}
+
+.background.gtavc {
+    background-image: url("https://cdn2.steamgriddb.com/hero/75291728e2d8458a104b6abd0b062b70.jpg");
+    background-size: cover;
+    background-position: 75% center;
+}
+
+.background.geoguessr {
+    background-image: url("https://cdn2.steamgriddb.com/hero/29436f8465776b6bdd235b45db5aeab5.jpg");
+    background-size: cover;
+    background-position: 50% center;
+}
+
+.background.sfex2 {
+    background-image: url("https://cdn2.steamgriddb.com/hero/e97932e472c0d427a6cdbb91d5404241.png");
+    background-size: cover;
+    background-position: 85% center;
+}
+
+
+/* =================================
+   CORES DOS ÍCONES
+   ================================= */
+
+.game-icon.minecraft {
+    background-image: url("https://cdn2.steamgriddb.com/logo/90915208c601cc8c86ad01250ee90c12.png");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.game-icon.gtavc {
+    background-image: url("https://cdn2.steamgriddb.com/logo/a60c71bd110ebc4d6916e16b8ca24fda.png");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.game-icon.geoguessr {
+    background-image: url("https://cdn2.steamgriddb.com/logo/b808f0a1150069f8ab4947f2d536ab0a.png");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.game-icon.sfex2 {
+    background-image: url("https://images.launchbox-app.com/65a38555-1798-4ad6-9695-59b42ef4ac0a.png");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
 }
