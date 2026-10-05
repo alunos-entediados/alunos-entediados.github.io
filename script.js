@@ -39,8 +39,10 @@ const gameLinks = {
         "https://archive.org/details/arcade_sfex2#",
 
     "messenger":
-        "https://messenger.abeto.co/"
+        "https://messenger.abeto.co/",
 
+    "skullhotel":
+        "https://skullhotel.io/"
 };
 
 /* =================================

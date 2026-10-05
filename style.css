@@ -289,6 +289,12 @@ body {
     background-position: 0% center;
 }
 
+.background.skullhotel {
+    background-image: url(img/library_hero_2x\(1\).jpg);
+    background-size: cover;
+    background-position: 70% center;
+}
+
 
 /* =================================
    CORES DOS ÍCONES
@@ -324,6 +330,13 @@ body {
 
 .game-icon.messenger {
     background-image: url(img/messager_logo.png);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.game-icon.skullhotel {
+    background-image: url(img/logo_2x.png);
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
