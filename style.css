@@ -283,6 +283,12 @@ body {
     background-position: 85% center;
 }
 
+.background.messenger {
+    background-image: url("https://assets.awwwards.com/awards/gallery/2026/01/msn-cs-interior-image08.jpg");
+    background-size: cover;
+    background-position: 0% center;
+}
+
 
 /* =================================
    CORES DOS ÍCONES
@@ -311,6 +317,13 @@ body {
 
 .game-icon.sfex2 {
     background-image: url("https://images.launchbox-app.com/65a38555-1798-4ad6-9695-59b42ef4ac0a.png");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.game-icon.messenger {
+    background-image: url(img/messager_logo.png);
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;

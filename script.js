@@ -36,9 +36,12 @@ const gameLinks = {
         "https://www.geoguessr.com/pt",
 
     "sfex2":
-        "https://archive.org/details/arcade_sfex2#"
-};
+        "https://archive.org/details/arcade_sfex2#",
 
+    "messenger":
+        "https://messenger.abeto.co/"
+
+};
 
 /* =================================
    SELECIONAR JOGO
