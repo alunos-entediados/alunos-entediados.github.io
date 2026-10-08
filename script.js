@@ -42,7 +42,19 @@ const gameLinks = {
         "https://messenger.abeto.co/",
 
     "skullhotel":
-        "https://skullhotel.io/"
+        "https://skullhotel.io/",
+
+    "borderwar":
+        "https://borderwar.io/",
+
+    "sabostack":
+        "https://sabostack.com/",
+
+    "attritionworld":
+        "https://attrition.world/",
+
+    "hexarena":
+        "https://hexarena.net/"
 };
 
 /* =================================
