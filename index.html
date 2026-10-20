@@ -1,66 +1,118 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Alunos Entediados</title>
-
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#19142f">
+  <meta name="description" content="Alunos Entediados: um mural de jogos e sites para passar o tempo.">
+  <title>Alunos Entediados</title>
+  <!-- Ícone da aba: um "AE" amarelo desenhado em SVG, sem precisar de arquivo extra. -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ffdf35'/%3E%3Ctext x='16' y='23' font-family='Arial,sans-serif' font-size='16' font-weight='900' text-anchor='middle' fill='%23201435'%3EAE%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <!-- A ordem importa: games.js cria a lista DEFAULT_GAMES que o script.js usa. -->
+  <script src="games.js" defer></script>
+  <script src="script.js" defer></script>
 </head>
-
 <body>
+  <header class="topbar">
+    <a class="brand" href="#inicio" aria-label="Alunos Entediados — início">
+      <span class="brand-mark" aria-hidden="true">AE</span>
+      <span class="brand-name">ALUNOS ENTEDIADOS</span>
+    </a>
+    <span class="toolbar-count" aria-live="polite"><span id="game-count">22</span> jogos</span>
+    <div class="topbar-actions">
+      <label class="search-wrap" for="search-input">
+        <span aria-hidden="true">⌕</span>
+        <input id="search-input" type="search" placeholder="Buscar...  ( / )" autocomplete="off" aria-label="Buscar jogo (atalho: tecla /)">
+      </label>
+      <button id="add-toggle" class="add-button" type="button" aria-expanded="false" aria-controls="add-panel">
+        <span aria-hidden="true">＋</span> Adicionar
+      </button>
+      <button id="text-toggle" class="text-button" type="button" aria-expanded="false" aria-controls="text-panel">Modo texto</button>
+      <button id="hide-blocked-toggle" class="filter-button" type="button" aria-pressed="false">Ocultar bloqueados</button>
+      <button id="reset-button" class="reset-button" type="button" title="Apaga as alterações locais e restaura a coleção inicial">Restaurar</button>
+    </div>
+  </header>
 
-    <!-- Fundo do jogo selecionado -->
-    <div class="background"></div>
+  <main id="inicio" class="page-shell">
+    <noscript>
+      <p class="noscript">Este site precisa de JavaScript para mostrar os jogos. Ative o JavaScript no navegador e recarregue a página.</p>
+    </noscript>
 
-    <main class="launcher">
-
-        <!-- Ícone do jogo selecionado -->
-        <div class="game-icon"></div>
-
-        <!-- Lista de jogos -->
-        <div class="game-list-container">
-
-            <div class="game-list">
-
-                <div class="game selected" data-game="minecraft">
-                    Minecraft
-                </div>
-                <div class="game" data-game="gtavc">
-                    Grand Theft Auto: Vice City
-                </div>
-                <div class="game" data-game="messenger">
-                    Messenger
-                </div>
-                <div class="game" data-game="skullhotel">
-                    Skull Hotel
-                </div>
-                <div class="game" data-game="geoguessr">
-                    Geoguessr
-                </div>
-                <div class="game" data-game="sfex2">
-                    Street Fighter EX2
-                </div>
-                <div class="game" data-game="borderwar">
-                    Borderwar
-                </div>
-                <div class="game" data-game="sabostack">
-                    Sabostack
-                </div>
-                <div class="game" data-game="attritionworld">
-                    Attrition World
-                </div>
-                <div class="game" data-game="hexarena">
-                    Hexarena
-                </div>
-            </div>
-
+    <section id="add-panel" class="add-panel" hidden aria-labelledby="form-title">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">A COLEÇÃO É SUA</p>
+          <h2 id="form-title">Adicionar um quadradinho</h2>
         </div>
+        <button id="close-panel" class="icon-button" type="button" aria-label="Fechar formulário">×</button>
+      </div>
+      <form id="game-form">
+        <label>
+          Nome do site
+          <input id="game-name" name="name" type="text" maxlength="64" placeholder="Ex.: Meu jogo favorito" required>
+        </label>
+        <label>
+          Endereço do site
+          <input id="game-url" name="url" type="url" placeholder="https://exemplo.com" required>
+        </label>
+        <label>
+          <span>Endereço do ícone <span class="optional">(opcional)</span></span>
+          <input id="game-icon" name="icon" type="url" placeholder="https://exemplo.com/icone.png">
+        </label>
+        <label class="color-field">
+          Cor de fundo
+          <input id="game-color" name="color" type="color" value="#ffd85a">
+        </label>
+        <label class="check-field">
+          <input id="game-blocked" name="blocked" type="checkbox">
+          <span>Bloqueado pelo firewall <span class="optional">(a rede não deixa abrir este site)</span></span>
+        </label>
+        <div class="form-footer">
+          <p id="icon-help">Ícones PNG/WebP transparentes funcionam sobre uma cor sólida.</p>
+          <button id="form-submit" class="save-button" type="submit">Adicionar <span aria-hidden="true">↗</span></button>
+        </div>
+        <p id="form-message" class="form-message" role="status" aria-live="polite"></p>
+      </form>
+    </section>
 
-    </main>
+    <section id="text-panel" class="text-panel" hidden aria-labelledby="text-title">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">EDITAR A COLEÇÃO COMO CÓDIGO</p>
+          <h2 id="text-title">Modo texto — DEFAULT_GAMES</h2>
+        </div>
+        <button id="close-text-panel" class="icon-button" type="button" aria-label="Fechar modo texto">×</button>
+      </div>
+      <p class="text-help">Edite a lista abaixo e clique em <strong>Aplicar alterações</strong> para atualizar o mural neste navegador. Para definir os jogos padrão do site, clique em <strong>Copiar código</strong> e cole tudo no arquivo <code>games.js</code>, substituindo o conteúdo dele.</p>
+      <textarea id="code-editor" spellcheck="false" aria-label="Código JavaScript da lista de jogos"></textarea>
+      <div class="text-panel-footer">
+        <p id="text-message" class="text-message" role="status" aria-live="polite"></p>
+        <div class="text-actions">
+          <button id="close-text-cancel" class="cancel-button" type="button">Fechar</button>
+          <button id="copy-code" class="text-button" type="button">Copiar código</button>
+          <button id="apply-code" class="save-button" type="button">Aplicar alterações</button>
+        </div>
+      </div>
+    </section>
 
-    <script src="script.js"></script>
+    <section id="game-grid" class="game-grid" aria-label="Lista de sites e jogos"></section>
+    <div id="empty-state" class="empty-state" hidden>
+      <span class="empty-icon" aria-hidden="true">?</span>
+      <h2>Nenhum quadradinho encontrado</h2>
+      <p>Tente outra busca ou adicione um novo site.</p>
+    </div>
+  </main>
 
+  <dialog id="reset-dialog" class="confirm-dialog">
+    <form method="dialog">
+      <h2>Restaurar a coleção?</h2>
+      <p>Isso apaga as alterações salvas neste navegador e recupera a lista original de jogos definida no arquivo <code>games.js</code>.</p>
+      <div class="dialog-actions">
+        <button class="cancel-button" value="cancel">Cancelar</button>
+        <button id="confirm-reset" class="save-button" value="confirm">Restaurar</button>
+      </div>
+    </form>
+  </dialog>
 </body>
 </html>
