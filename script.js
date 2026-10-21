@@ -82,8 +82,8 @@ let hideBlocked = loadHideBlocked();
 let visibleGames = []; // o que está aparecendo agora (depende da busca)
 
 iconHelp.textContent = AUTO_ICONS
-  ? 'Deixe o ícone em branco para usar o ícone do próprio site. PNG/WebP transparentes mostram a cor de fundo.'
-  : 'Sem ícone, o quadradinho mostra as iniciais do nome. PNG/WebP transparentes mostram a cor de fundo.';
+  ? 'Em branco usa o ícone do próprio site. Escreva imglocal para usar img/NOME DO JOGO.png.'
+  : 'Sem ícone, mostra as iniciais. Escreva imglocal para usar img/NOME DO JOGO.png.';
 
 // ---------------------------------------------------------------------------
 // Dados: carregar, salvar e validar
@@ -171,6 +171,20 @@ function safeHttpUrl(value, optional = false) {
   }
 }
 
+// Escrever "imglocal" no campo do ícone usa a imagem img/<nome do jogo>.png da pasta do projeto.
+const LOCAL_ICON_WORD = 'imglocal';
+function isLocalIcon(value) {
+  return String(value || '').trim().toLowerCase() === LOCAL_ICON_WORD;
+}
+function localIconPath(game) {
+  return `img/${encodeURIComponent(game.name.trim())}.png`;
+}
+// Valida o campo do ícone: "" (vazio), "imglocal" ou um endereço http(s). Devolve null se for inválido.
+function parseIconValue(value) {
+  if (isLocalIcon(value)) return LOCAL_ICON_WORD;
+  return safeHttpUrl(value, true);
+}
+
 function getDomain(url) {
   try { return new URL(url).hostname.replace(/^www\./, ''); }
   catch { return url; }
@@ -215,7 +229,7 @@ function createGameCard(game, index) {
     // As partes transparentes de PNG/WebP mostram a cor sólida configurada acima.
     art.classList.add('has-icon');
     const image = document.createElement('img');
-    image.src = game.icon;
+    image.src = isLocalIcon(game.icon) ? localIconPath(game) : game.icon;
     image.alt = '';
     image.loading = 'lazy';
     image.referrerPolicy = 'no-referrer';
@@ -506,8 +520,8 @@ function readGamesFromCode(source) {
     if (name.length > 64) throw new Error(`O nome do item ${index + 1} passa de 64 caracteres.`);
     const url = safeHttpUrl(entry.url);
     if (!url) throw new Error(`O endereço do item ${index + 1} precisa começar com http:// ou https://.`);
-    const icon = safeHttpUrl(entry.icon, true);
-    if (icon === null) throw new Error(`O ícone do item ${index + 1} precisa ser uma URL válida ou uma string vazia.`);
+    const icon = parseIconValue(entry.icon);
+    if (icon === null) throw new Error(`O ícone do item ${index + 1} precisa ser uma URL válida, \"imglocal\" ou ficar vazio.`);
     const color = normalizeHexColor(entry.color, COLORS[index % COLORS.length]);
     if (entry.blocked !== undefined && typeof entry.blocked !== 'boolean') {
       throw new Error(`O campo "blocked" do item ${index + 1} precisa ser true ou false (sem aspas).`);
@@ -594,14 +608,14 @@ gameForm.addEventListener('submit', (event) => {
   const name = gameNameInput.value.trim();
   const url = safeHttpUrl(gameUrlInput.value);
   const iconInput = gameIconInput.value.trim();
-  const icon = safeHttpUrl(iconInput, true);
+  const icon = parseIconValue(iconInput);
   const color = normalizeHexColor(gameColorInput.value, COLORS[games.length % COLORS.length]);
   const blocked = gameBlockedInput.checked;
 
   if (!name) return showFormMessage('Digite um nome para o site.', true);
   if (name.length > 64) return showFormMessage('O nome pode ter no máximo 64 caracteres.', true);
   if (!url) return showFormMessage('Digite um endereço válido começando com http:// ou https://.', true);
-  if (icon === null) return showFormMessage('O endereço do ícone precisa ser uma URL válida ou ficar vazio.', true);
+  if (icon === null) return showFormMessage('O ícone precisa ser um endereço válido, a palavra imglocal, ou ficar vazio.', true);
 
   const normalizedName = name.toLocaleLowerCase('pt-BR');
   const normalizedUrl = url.replace(/\/$/, '').toLocaleLowerCase('pt-BR');

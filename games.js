@@ -32,8 +32,15 @@ const DEFAULT_GAMES = [
   {
     "name": "Dragon Knight",
     "url": "https://dragonknight.cul4s.com/",
-    "icon": "",
+    "icon": "imglocal",
     "color": "#9f0004",
+    "blocked": false
+  },
+  {
+    "name": "Tiny Skies",
+    "url": "https://tinyskies.vercel.app/",
+    "icon": "imglocal",
+    "color": "#06b9fd",
     "blocked": false
   },
   {
@@ -44,13 +51,6 @@ const DEFAULT_GAMES = [
     "blocked": false
   },
   {
-    "name": "Street Fighter EX2",
-    "url": "https://archive.org/details/arcade_sfex2#",
-    "icon": "",
-    "color": "#b6e4b1",
-    "blocked": false
-  },
-  {
     "name": "Messenger",
     "url": "https://messenger.abeto.co/",
     "icon": "https://upload.wikimedia.org/wikipedia/en/3/37/Messenger_game_cover.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail_unscaled&_=20251005010412",
@@ -58,17 +58,24 @@ const DEFAULT_GAMES = [
     "blocked": false
   },
   {
+    "name": "Border War",
+    "url": "https://borderwar.io/",
+    "icon": "imglocal",
+    "color": "#000651",
+    "blocked": false
+  },
+  {
+    "name": "Street Fighter EX2",
+    "url": "https://archive.org/details/arcade_sfex2#",
+    "icon": "https://static.wikia.nocookie.net/streetfighter/images/a/ad/Street_Fighter_EX2_PlayStation_cover.jpg/revision/latest?cb=20081125224446",
+    "color": "#fcb625",
+    "blocked": false
+  },
+  {
     "name": "Skull Hotel",
     "url": "https://skullhotel.io/",
     "icon": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSHzzA_DSn599OnJkpAvPuAne3j6LnSKg9mNUEaBZy_v-SBRT-OkgbhRc&s=10",
     "color": "#ffbd85",
-    "blocked": false
-  },
-  {
-    "name": "Border War",
-    "url": "https://borderwar.io/",
-    "icon": "",
-    "color": "#8ee1d2",
     "blocked": false
   },
   {
@@ -81,49 +88,42 @@ const DEFAULT_GAMES = [
   {
     "name": "Attrition",
     "url": "https://attrition.world/",
-    "icon": "",
-    "color": "#c9e6a4",
-    "blocked": false
-  },
-  {
-    "name": "Hex Arena",
-    "url": "https://hexarena.net/",
-    "icon": "",
-    "color": "#b6caff",
+    "icon": "imglocal",
+    "color": "#efe6d0",
     "blocked": false
   },
   {
     "name": "Claybound",
     "url": "https://claybound-56949.web.app/",
-    "icon": "",
+    "icon": "https://yt3.googleusercontent.com/4VwISl-lCE1teTi7Dk_xpp7qZPPvy7DAnefa4Le0vWMAdRaLGU8zpjrsMdRYclf1k33eErB7y4U=s900-c-k-c0x00ffffff-no-rj",
     "color": "#ffb7a6",
     "blocked": false
   },
   {
     "name": "Badge Factory",
     "url": "https://hervestudio.github.io/badge-factory/",
-    "icon": "",
-    "color": "#f6e69a",
+    "icon": "imglocal",
+    "color": "#7801b8",
     "blocked": false
   },
   {
     "name": "SnookerSim",
     "url": "https://snookersim.com/",
-    "icon": "",
+    "icon": "imglocal",
     "color": "#ffd85a",
     "blocked": false
   },
   {
-    "name": "Merci Michel",
+    "name": "No Merci Michel",
     "url": "https://no.merci-michel.com/en/",
-    "icon": "",
-    "color": "#f9a7b0",
+    "icon": "imglocal",
+    "color": "#a2fffb",
     "blocked": false
   },
   {
     "name": "Doodle Shooter",
     "url": "https://doodleshooter.vercel.app/",
-    "icon": "",
+    "icon": "imglocal",
     "color": "#9fd8ff",
     "blocked": false
   },
@@ -149,31 +149,10 @@ const DEFAULT_GAMES = [
     "blocked": false
   },
   {
-    "name": "Tiny Skies",
-    "url": "https://tinyskies.vercel.app/",
-    "icon": "",
-    "color": "#8ee1d2",
-    "blocked": false
-  },
-  {
     "name": "Lacoste Experience",
     "url": "https://membersexperience-create.lacoste.com/gb/en/",
     "icon": "",
-    "color": "#ffcfec",
-    "blocked": false
-  },
-  {
-    "name": "Paintbut",
-    "url": "https://paintbut.netlify.app/",
-    "icon": "",
-    "color": "#c9e6a4",
-    "blocked": false
-  },
-  {
-    "name": "Larsberg",
-    "url": "https://www.larsberg.net/",
-    "icon": "",
-    "color": "#b6caff",
+    "color": "#ceffcf",
     "blocked": false
   }
 ];
