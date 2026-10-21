@@ -1,19 +1,3 @@
-// ============================================================
-//  LISTA PADRÃO DE JOGOS — este é o único arquivo que você precisa
-//  editar para mudar os jogos que já vêm no site.
-//
-//  Regras (as mesmas do "Modo texto"):
-//   - use aspas duplas "..." nos nomes das chaves e nos textos;
-//   - separe os itens com vírgula, mas NÃO coloque vírgula depois do último;
-//   - "icon" pode ficar "" (o site busca o ícone sozinho);
-//   - "color" é opcional (ex.: "#31a7df"); sem ele o site escolhe uma cor;
-//   - "blocked" diz se o firewall bloqueia o site: true = bloqueado,
-//     false = liberado (sem aspas). Se faltar, vale false.
-//
-//  Dica: no site, o botão "Modo texto" > "Copiar código" gera este mesmo
-//  formato. Cole tudo aqui, substituindo o conteúdo do arquivo.
-//  Depois de editar, clique em "Restaurar" no site para ver a nova lista.
-// ============================================================
 const DEFAULT_GAMES = [
   {
     "name": "Eaglercraft",
@@ -34,6 +18,41 @@ const DEFAULT_GAMES = [
     "url": "https://dragonknight.cul4s.com/",
     "icon": "imglocal",
     "color": "#9f0004",
+    "blocked": false
+  },
+  {
+    "name": "20 Minutes Till Dawn",
+    "url": "https://truffled.lol/unityframe.html?url=/games/20minutesbog/index.html",
+    "icon": "https://cdn2.steamgriddb.com/grid/6077a04dd6e9a9544fe03634ed1365e7.png",
+    "color": "#ed333b",
+    "blocked": true
+  },
+  {
+    "name": "The Simpsons: Hit & Run",
+    "url": "https://shar-wasm.cjoseph.workers.dev/",
+    "icon": "https://cdn2.steamgriddb.com/icon/61603780b437fb53aceb2563ccce02a4.png",
+    "color": "#f9f06b",
+    "blocked": true
+  },
+  {
+    "name": "Mario Kart 64",
+    "url": "https://truffled.lol/iframe.html?url=/games/mk64/index.html",
+    "icon": "https://cdn2.steamgriddb.com/grid/e5494d23b18b5c822bcaa9fe8fd077bf.jpg",
+    "color": "#f66151",
+    "blocked": false
+  },
+  {
+    "name": "PEAK",
+    "url": "https://wasm.rip/files/peak/PEAK.html",
+    "icon": "https://cdn2.steamgriddb.com/grid/912a54ae38d2a8f697ced133314a3b6c.png",
+    "color": "#f6e69a",
+    "blocked": false
+  },
+  {
+    "name": "Halo",
+    "url": "https://openhaloce.com/",
+    "icon": "https://cdn2.steamgriddb.com/grid/44ffb6f94b5ec5366ba0f896f7f0f680.png",
+    "color": "#57e389",
     "blocked": false
   },
   {
