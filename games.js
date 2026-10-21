@@ -25,7 +25,7 @@ const DEFAULT_GAMES = [
     "url": "https://truffled.lol/unityframe.html?url=/games/20minutesbog/index.html",
     "icon": "https://cdn2.steamgriddb.com/grid/6077a04dd6e9a9544fe03634ed1365e7.png",
     "color": "#ed333b",
-    "blocked": false
+    "blocked": true
   },
   {
     "name": "The Simpsons: Hit & Run",
@@ -39,14 +39,14 @@ const DEFAULT_GAMES = [
     "url": "https://truffled.lol/iframe.html?url=/games/mk64/index.html",
     "icon": "https://cdn2.steamgriddb.com/grid/e5494d23b18b5c822bcaa9fe8fd077bf.jpg",
     "color": "#f66151",
-    "blocked": false
+    "blocked": true
   },
   {
     "name": "PEAK",
     "url": "https://wasm.rip/files/peak/PEAK.html",
     "icon": "https://cdn2.steamgriddb.com/grid/912a54ae38d2a8f697ced133314a3b6c.png",
     "color": "#f6e69a",
-    "blocked": false
+    "blocked": true
   },
   {
     "name": "Halo",
