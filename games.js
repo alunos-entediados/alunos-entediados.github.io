@@ -1,6 +1,6 @@
 const DEFAULT_GAMES = [
   {
-    "name": "Eaglercraft",
+    "name": "Minecraft",
     "url": "https://eaglercraft.com/play?version=1.8.8",
     "icon": "https://cdn2.steamgriddb.com/icon/bfbe6b2f89c40bfc99a3c1183b7bdbf4/32/256x256.png",
     "color": "#289d46",
