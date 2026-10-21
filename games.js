@@ -25,14 +25,14 @@ const DEFAULT_GAMES = [
     "url": "https://truffled.lol/unityframe.html?url=/games/20minutesbog/index.html",
     "icon": "https://cdn2.steamgriddb.com/grid/6077a04dd6e9a9544fe03634ed1365e7.png",
     "color": "#ed333b",
-    "blocked": true
+    "blocked": false
   },
   {
     "name": "The Simpsons: Hit & Run",
     "url": "https://shar-wasm.cjoseph.workers.dev/",
     "icon": "https://cdn2.steamgriddb.com/icon/61603780b437fb53aceb2563ccce02a4.png",
     "color": "#f9f06b",
-    "blocked": true
+    "blocked": false
   },
   {
     "name": "Mario Kart 64",
