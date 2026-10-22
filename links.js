@@ -11,5 +11,6 @@
 const MORE_GAMES_SITES = [
   { "name": "Ported2Browser", "url": "https://ported2browser.com/?tab=popular&lang=pt" },
   { "name": "wasm.rip", "url": "https://wasm.rip/" },
+  { "name": "Three.js", "url": "https://threejs.org/" },
   { "name": "FNAF Games", "url": "https://fivenightsatfreddysgame.io/category/trending", "description": "Tem outros jogos que não são FNAF."}
 ];
