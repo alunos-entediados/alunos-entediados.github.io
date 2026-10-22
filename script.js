@@ -5,12 +5,6 @@ const STORAGE_KEY = 'meu-friv-retro-games-v1';
 // ---------------------------------------------------------------------------
 // Configurações fáceis de mudar
 // ---------------------------------------------------------------------------
-// true  = sites sem ícone próprio mostram o ícone (favicon) do próprio site,
-//         buscado no serviço gratuito de favicons do Google.
-//         Atenção: o navegador envia o domínio de cada site para o Google.
-// false = nunca busca nada de fora; mostra só as iniciais do nome.
-const AUTO_ICONS = true;
-const FAVICON_URL = 'https://www.google.com/s2/favicons?sz=128&domain=';
 
 // Tamanho (em px) dos quadradinhos. Com poucos sites, a grade cabe inteira na
 // tela. Se os quadradinhos ficariam menores que MIN_TILE, a página passa a rolar.
@@ -56,7 +50,6 @@ const gameForm = document.querySelector('#game-form');
 const formTitle = document.querySelector('#form-title');
 const formSubmit = document.querySelector('#form-submit');
 const formMessage = document.querySelector('#form-message');
-const iconHelp = document.querySelector('#icon-help');
 const gameNameInput = document.querySelector('#game-name');
 const gameUrlInput = document.querySelector('#game-url');
 const gameIconInput = document.querySelector('#game-icon');
@@ -70,6 +63,9 @@ const copyCodeButton = document.querySelector('#copy-code');
 const applyCodeButton = document.querySelector('#apply-code');
 const textMessage = document.querySelector('#text-message');
 const resetDialog = document.querySelector('#reset-dialog');
+const moreToggle = document.querySelector('#more-toggle');
+const moreDialog = document.querySelector('#more-dialog');
+const moreList = document.querySelector('#more-list');
 const resetButton = document.querySelector('#reset-button');
 const confirmReset = document.querySelector('#confirm-reset');
 const hideBlockedToggle = document.querySelector('#hide-blocked-toggle');
@@ -81,9 +77,6 @@ let games = loadGames();
 let hideBlocked = loadHideBlocked();
 let visibleGames = []; // o que está aparecendo agora (depende da busca)
 
-iconHelp.textContent = AUTO_ICONS
-  ? 'Em branco usa o ícone do próprio site. Escreva imglocal para usar img/NOME DO JOGO.png.'
-  : 'Sem ícone, mostra as iniciais. Escreva imglocal para usar img/NOME DO JOGO.png.';
 
 // ---------------------------------------------------------------------------
 // Dados: carregar, salvar e validar
@@ -122,7 +115,7 @@ function normalizeLoadedGame(game, index, prefix = 'default') {
     id: typeof game.id === 'string' && game.id ? game.id : `${prefix}-${index + 1}`,
     name: game.name,
     url: game.url,
-    icon: typeof game.icon === 'string' ? game.icon : '',
+    icon: typeof game.icon === 'string' && game.icon.trim().toLowerCase() !== 'imglocal' ? game.icon : '',
     color: getTileColor(game, index),
     blocked: typeof game.blocked === 'boolean' ? game.blocked : legacyBlocked(game.url)
   };
@@ -171,18 +164,9 @@ function safeHttpUrl(value, optional = false) {
   }
 }
 
-// Escrever "imglocal" no campo do ícone usa a imagem img/<nome do jogo>.png da pasta do projeto.
-const LOCAL_ICON_WORD = 'imglocal';
-function isLocalIcon(value) {
-  return String(value || '').trim().toLowerCase() === LOCAL_ICON_WORD;
-}
+// Sem ícone no cadastro, o site procura a imagem img/<nome do jogo>.png na pasta do projeto.
 function localIconPath(game) {
   return `img/${encodeURIComponent(game.name.trim())}.png`;
-}
-// Valida o campo do ícone: "" (vazio), "imglocal" ou um endereço http(s). Devolve null se for inválido.
-function parseIconValue(value) {
-  if (isLocalIcon(value)) return LOCAL_ICON_WORD;
-  return safeHttpUrl(value, true);
 }
 
 function getDomain(url) {
@@ -212,8 +196,12 @@ function createGameCard(game, index) {
   wrapper.className = 'game-card-wrap';
   wrapper.style.setProperty('--i', String(index % 30));
 
+  wrapper.dataset.id = game.id;
+  wrapper.draggable = true; // arrastar para reordenar
+
   const link = document.createElement('a');
   link.className = 'game-card';
+  link.draggable = false; // senão o navegador arrasta o link em vez do quadradinho
   link.href = game.url;
   link.target = '_blank';
   link.rel = 'noopener noreferrer';
@@ -225,12 +213,13 @@ function createGameCard(game, index) {
   art.style.setProperty('--tile-color', getTileColor(game, index));
 
   if (game.icon) {
-    // Com um ícone próprio, remove as formas e as iniciais padrão.
+    // Com um ícone próprio (endereço colado), remove as formas e as iniciais padrão.
     // As partes transparentes de PNG/WebP mostram a cor sólida configurada acima.
     art.classList.add('has-icon');
     const image = document.createElement('img');
-    image.src = isLocalIcon(game.icon) ? localIconPath(game) : game.icon;
+    image.src = game.icon;
     image.alt = '';
+    image.draggable = false;
     image.loading = 'lazy';
     image.referrerPolicy = 'no-referrer';
     image.addEventListener('error', () => {
@@ -241,9 +230,21 @@ function createGameCard(game, index) {
     }, { once: true });
     art.append(image);
   } else {
-    // As iniciais aparecem na hora; se o ícone do site carregar, ele toma o lugar delas.
-    art.append(createPlaceholder(game.name));
-    if (AUTO_ICONS) art.append(createAutoIcon(game, art));
+    // Sem ícone: aparece o desenho padrão (iniciais). Em paralelo, tenta img/<nome>.png;
+    // se o arquivo existir, a imagem toma o lugar do desenho. Se não existir, nada muda.
+    const placeholder = createPlaceholder(game.name);
+    art.append(placeholder);
+    const local = document.createElement('img');
+    local.alt = '';
+    local.draggable = false;
+    local.referrerPolicy = 'no-referrer';
+    local.addEventListener('load', () => {
+      placeholder.remove();
+      art.classList.add('has-icon');
+    }, { once: true });
+    local.addEventListener('error', () => local.remove(), { once: true });
+    local.src = localIconPath(game);
+    art.append(local);
   }
 
   const label = document.createElement('span');
@@ -283,30 +284,6 @@ function createPlaceholder(name) {
   placeholder.setAttribute('aria-hidden', 'true');
   placeholder.textContent = getInitials(name);
   return placeholder;
-}
-
-// Ícone automático: fica invisível até a imagem carregar de verdade.
-// Se der erro (site sem ícone, sem internet...), as iniciais continuam lá.
-function createAutoIcon(game, art) {
-  const badge = document.createElement('span');
-  badge.className = 'tile-favicon';
-  badge.setAttribute('aria-hidden', 'true');
-
-  const image = document.createElement('img');
-  image.alt = '';
-  image.loading = 'lazy';
-  image.decoding = 'async';
-  image.referrerPolicy = 'no-referrer';
-  image.addEventListener('load', () => {
-    // Ícones minúsculos (16–32px) ficam melhores ampliados "em pixels" — combina com o tema retrô.
-    if (image.naturalWidth < 48) badge.classList.add('is-small');
-    art.classList.add('favicon-ready');
-  }, { once: true });
-  image.addEventListener('error', () => badge.remove(), { once: true });
-  image.src = FAVICON_URL + encodeURIComponent(getDomain(game.url));
-
-  badge.append(image);
-  return badge;
 }
 
 function renderGames({ animate = false } = {}) {
@@ -394,6 +371,11 @@ window.addEventListener('resize', () => {
   cancelAnimationFrame(resizeFrame);
   resizeFrame = requestAnimationFrame(() => updateTileSize(grid.children.length));
 });
+
+// Se a barra do topo mudar de altura (quebrou em mais linhas, fonte carregou...), recalcula o espaço dela.
+if (typeof ResizeObserver === 'function') {
+  new ResizeObserver(() => updateTileSize(grid.children.length)).observe(topbar);
+}
 
 // ---------------------------------------------------------------------------
 // Painéis e mensagens
@@ -520,8 +502,8 @@ function readGamesFromCode(source) {
     if (name.length > 64) throw new Error(`O nome do item ${index + 1} passa de 64 caracteres.`);
     const url = safeHttpUrl(entry.url);
     if (!url) throw new Error(`O endereço do item ${index + 1} precisa começar com http:// ou https://.`);
-    const icon = parseIconValue(entry.icon);
-    if (icon === null) throw new Error(`O ícone do item ${index + 1} precisa ser uma URL válida, \"imglocal\" ou ficar vazio.`);
+    const icon = safeHttpUrl(entry.icon, true);
+    if (icon === null) throw new Error(`O ícone do item ${index + 1} precisa ser uma URL válida ou uma string vazia.`);
     const color = normalizeHexColor(entry.color, COLORS[index % COLORS.length]);
     if (entry.blocked !== undefined && typeof entry.blocked !== 'boolean') {
       throw new Error(`O campo "blocked" do item ${index + 1} precisa ser true ou false (sem aspas).`);
@@ -608,14 +590,14 @@ gameForm.addEventListener('submit', (event) => {
   const name = gameNameInput.value.trim();
   const url = safeHttpUrl(gameUrlInput.value);
   const iconInput = gameIconInput.value.trim();
-  const icon = parseIconValue(iconInput);
+  const icon = safeHttpUrl(iconInput, true);
   const color = normalizeHexColor(gameColorInput.value, COLORS[games.length % COLORS.length]);
   const blocked = gameBlockedInput.checked;
 
   if (!name) return showFormMessage('Digite um nome para o site.', true);
   if (name.length > 64) return showFormMessage('O nome pode ter no máximo 64 caracteres.', true);
   if (!url) return showFormMessage('Digite um endereço válido começando com http:// ou https://.', true);
-  if (icon === null) return showFormMessage('O ícone precisa ser um endereço válido, a palavra imglocal, ou ficar vazio.', true);
+  if (icon === null) return showFormMessage('O endereço do ícone precisa ser uma URL válida ou ficar vazio.', true);
 
   const normalizedName = name.toLocaleLowerCase('pt-BR');
   const normalizedUrl = url.replace(/\/$/, '').toLocaleLowerCase('pt-BR');
@@ -683,9 +665,166 @@ function resetCollection() {
   closeTextPanel();
 }
 
+// ---------------------------------------------------------------------------
+// Reordenar arrastando (e, no teclado, Shift + setas)
+// ---------------------------------------------------------------------------
+let draggedId = null;
+let dropMark = null; // { element, after }: em qual quadradinho o traço amarelo está aparecendo
+
+function clearDropMark() {
+  if (dropMark) dropMark.element.classList.remove('drop-before', 'drop-after');
+  dropMark = null;
+}
+
+// Põe o jogo "id" antes (after = false) ou depois (after = true) do jogo "targetId".
+// Funciona mesmo com a busca ou o "Ocultar bloqueados" ligados, porque mexe na lista inteira.
+// Devolve true se a ordem mudou.
+function moveGame(id, targetId, after) {
+  if (id === targetId) return false;
+  const next = games.filter((game) => game.id !== id);
+  const moving = games.find((game) => game.id === id);
+  const targetIndex = next.findIndex((game) => game.id === targetId);
+  if (!moving || targetIndex < 0) return false;
+  next.splice(targetIndex + (after ? 1 : 0), 0, moving);
+  if (next.every((game, index) => game === games[index])) return false; // caiu no mesmo lugar
+
+  const previous = games;
+  games = next;
+  if (!saveGames()) {
+    games = previous;
+    window.alert(SAVE_ERROR);
+    return false;
+  }
+  renderGames();
+  return true;
+}
+
+function cardFromEvent(event) {
+  return event.target instanceof Element ? event.target.closest('.game-card-wrap') : null;
+}
+
+grid.addEventListener('dragstart', (event) => {
+  const card = cardFromEvent(event);
+  if (!card) return;
+  draggedId = card.dataset.id;
+  event.dataTransfer.effectAllowed = 'move';
+  event.dataTransfer.setData('text/plain', draggedId); // o Firefox só começa a arrastar se houver algum dado
+  card.classList.add('dragging');
+});
+
+grid.addEventListener('dragover', (event) => {
+  if (!draggedId) return;
+  const card = cardFromEvent(event);
+  if (!card || card.dataset.id === draggedId) { clearDropMark(); return; }
+  event.preventDefault(); // sem isso o navegador não deixa soltar aqui
+  event.dataTransfer.dropEffect = 'move';
+  const box = card.getBoundingClientRect();
+  const after = event.clientX > box.left + box.width / 2; // metade direita = depois; esquerda = antes
+  if (!dropMark || dropMark.element !== card || dropMark.after !== after) {
+    clearDropMark();
+    card.classList.add(after ? 'drop-after' : 'drop-before');
+    dropMark = { element: card, after };
+  }
+});
+
+grid.addEventListener('drop', (event) => {
+  if (!draggedId || !dropMark) return;
+  event.preventDefault();
+  const { element, after } = dropMark;
+  const id = draggedId;
+  clearDropMark();
+  draggedId = null; // o quadradinho é recriado em renderGames, então o "dragend" não chega aqui
+  moveGame(id, element.dataset.id, after);
+});
+
+// Soltou fora de qualquer quadradinho, ou apertou Esc: limpa tudo.
+grid.addEventListener('dragend', () => {
+  draggedId = null;
+  clearDropMark();
+  grid.querySelectorAll('.dragging').forEach((card) => card.classList.remove('dragging'));
+});
+
+// Teclado: com um quadradinho em foco, Shift + seta esquerda/direita move uma casa.
+grid.addEventListener('keydown', (event) => {
+  if (!event.shiftKey || (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight')) return;
+  const card = cardFromEvent(event);
+  if (!card) return;
+  const cards = [...grid.children];
+  const toRight = event.key === 'ArrowRight';
+  const neighbor = cards[cards.indexOf(card) + (toRight ? 1 : -1)];
+  if (!neighbor) return;
+  event.preventDefault();
+  const id = card.dataset.id;
+  if (moveGame(id, neighbor.dataset.id, toRight)) {
+    const moved = [...grid.children].find((item) => item.dataset.id === id);
+    if (moved) moved.querySelector('.game-card').focus(); // o quadradinho foi recriado: devolve o foco
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Janela "Mais jogos" (os links ficam no arquivo links.js)
+// ---------------------------------------------------------------------------
+function getMoreSites() {
+  const list = typeof MORE_GAMES_SITES !== 'undefined' && Array.isArray(MORE_GAMES_SITES) ? MORE_GAMES_SITES : [];
+  return list
+    .map((site) => ({
+      name: site && typeof site.name === 'string' ? site.name.trim() : '',
+      url: site ? safeHttpUrl(site.url) : null,
+      description: site && typeof site.description === 'string' ? site.description.trim() : ''
+    }))
+    .filter((site) => site.name && site.url);
+}
+
+function renderMoreSites() {
+  moreList.replaceChildren();
+  const sites = getMoreSites();
+  if (sites.length === 0) {
+    const empty = document.createElement('li');
+    empty.className = 'more-empty';
+    empty.textContent = 'Ainda não há links aqui. Adicione no arquivo links.js.';
+    moreList.append(empty);
+    return;
+  }
+  for (const site of sites) {
+    const item = document.createElement('li');
+    const link = document.createElement('a');
+    link.className = 'more-link';
+    link.href = site.url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+
+    const text = document.createElement('span');
+    text.className = 'more-text';
+    const name = document.createElement('span');
+    name.className = 'more-name';
+    name.textContent = site.name;
+    const detail = document.createElement('span');
+    detail.className = 'more-domain';
+    detail.textContent = site.description || getDomain(site.url);
+    text.append(name, detail);
+
+    const arrow = document.createElement('span');
+    arrow.setAttribute('aria-hidden', 'true');
+    arrow.textContent = '↗';
+
+    link.append(text, arrow);
+    item.append(link);
+    moreList.append(item);
+  }
+}
+
+moreToggle.addEventListener('click', () => {
+  renderMoreSites();
+  moreDialog.showModal();
+});
+// Clicar fora da janela (no fundo escuro) também fecha.
+moreDialog.addEventListener('click', (event) => {
+  if (event.target === moreDialog) moreDialog.close();
+});
+
 // Atalhos de teclado: "/" vai para a busca, Esc fecha painéis, Enter na busca abre o primeiro resultado.
 document.addEventListener('keydown', (event) => {
-  if (resetDialog.open) return; // o próprio <dialog> já fecha com Esc
+  if (resetDialog.open || moreDialog.open) return; // o próprio <dialog> já fecha com Esc
 
   if (event.key === 'Escape') {
     if (!addPanel.hidden) { closeAddPanel(); addToggle.focus(); }

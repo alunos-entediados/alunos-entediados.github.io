@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="style.css">
   <!-- A ordem importa: games.js cria a lista DEFAULT_GAMES que o script.js usa. -->
   <script src="games.js" defer></script>
+  <script src="links.js" defer></script>
   <script src="script.js" defer></script>
 </head>
 <body>
@@ -30,6 +31,7 @@
       </button>
       <button id="text-toggle" class="text-button" type="button" aria-expanded="false" aria-controls="text-panel">Modo texto</button>
       <button id="hide-blocked-toggle" class="filter-button" type="button" aria-pressed="false">Ocultar bloqueados</button>
+      <button id="more-toggle" class="text-button" type="button" aria-haspopup="dialog" title="Sites para encontrar mais jogos">Mais jogos</button>
       <button id="reset-button" class="reset-button" type="button" title="Apaga as alterações locais e restaura a coleção inicial">Restaurar</button>
     </div>
   </header>
@@ -58,7 +60,7 @@
         </label>
         <label>
           <span>Endereço do ícone <span class="optional">(opcional)</span></span>
-          <input id="game-icon" name="icon" type="text" placeholder="https://… ou imglocal">
+          <input id="game-icon" name="icon" type="url" placeholder="https://exemplo.com/icone.png">
         </label>
         <label class="color-field">
           Cor de fundo
@@ -69,7 +71,7 @@
           <span>Bloqueado pelo firewall <span class="optional">(a rede não deixa abrir este site)</span></span>
         </label>
         <div class="form-footer">
-          <p id="icon-help">Ícones PNG/WebP transparentes funcionam sobre uma cor sólida.</p>
+          <p id="icon-help">Em branco: o site usa img/NOME DO JOGO.png, se existir; senão, o desenho padrão. PNG/WebP transparentes mostram a cor de fundo.</p>
           <button id="form-submit" class="save-button" type="submit">Adicionar <span aria-hidden="true">↗</span></button>
         </div>
         <p id="form-message" class="form-message" role="status" aria-live="polite"></p>
@@ -103,6 +105,17 @@
       <p>Tente outra busca ou adicione um novo site.</p>
     </div>
   </main>
+
+  <dialog id="more-dialog" class="confirm-dialog more-dialog" aria-labelledby="more-title">
+    <form method="dialog">
+      <h2 id="more-title">Mais jogos</h2>
+      <p>Sites onde você pode encontrar mais jogos:</p>
+      <ul id="more-list" class="more-list"></ul>
+      <div class="dialog-actions">
+        <button class="cancel-button" value="close">Fechar</button>
+      </div>
+    </form>
+  </dialog>
 
   <dialog id="reset-dialog" class="confirm-dialog">
     <form method="dialog">

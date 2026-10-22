@@ -246,30 +246,25 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .tile-art.has-icon img { object-fit: contain; padding: 3px; }
 .tile-art.has-icon .tile-placeholder { display: none; }
 
-/* Ícone automático do site: um "adesivo" branco no centro, com a mesma inclinação das iniciais.
-   Fica transparente (mas presente na página, para o carregamento preguiçoso funcionar)
-   até a imagem carregar; aí o script.js põe .favicon-ready e ele substitui as iniciais. */
-.tile-favicon {
-  position: absolute;
-  z-index: 2;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  width: 64%;
-  height: 64%;
-  margin: auto;
-  background: #fff;
-  border: max(2px, calc(var(--tile-size) * .018)) solid rgba(255,255,255,.9);
-  border-radius: 8px;
-  box-shadow: 3px 3px 0 rgba(22, 11, 49, .3);
-  opacity: 0;
-  transform: rotate(-4deg);
-}
-.tile-favicon img { position: static; width: 72%; height: 72%; object-fit: contain; padding: 0; }
-.tile-favicon.is-small img { width: 50%; height: 50%; image-rendering: pixelated; }
-.tile-art.favicon-ready .tile-favicon { opacity: 1; }
-.tile-art.favicon-ready .tile-placeholder { display: none; }
+/* Imagem local (img/nome.png) ainda não carregada: fica invisível sob o desenho padrão. */
+.tile-art:not(.has-icon) > img { opacity: 0; }
 
+/* Reordenar arrastando: o quadradinho levantado fica mais claro e um traço amarelo mostra onde ele vai cair. */
+.game-card-wrap.dragging { opacity: .35; }
+.game-card-wrap.drop-before::before, .game-card-wrap.drop-after::before {
+  content: "";
+  position: absolute;
+  z-index: 9;
+  top: 0;
+  width: 5px;
+  height: var(--tile-size);
+  background: var(--yellow);
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .45);
+  pointer-events: none;
+}
+.game-card-wrap.drop-before::before { left: calc(var(--grid-gap) / -2 - 2.5px); }
+.game-card-wrap.drop-after::before { right: calc(var(--grid-gap) / -2 - 2.5px); }
 
 .tile-actions {
   position: absolute;
@@ -360,6 +355,27 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .confirm-dialog h2 { margin: 0 0 9px; }
 .confirm-dialog p { color: #777087; font-size: 12px; line-height: 1.5; }
 .confirm-dialog code { padding: 1px 4px; color: #382478; background: #eee9ff; border-radius: 3px; }
+/* Janela "Mais jogos". */
+.more-dialog { max-height: min(80dvh, 560px); overflow: auto; }
+.more-dialog p { margin: 0 0 12px; }
+.more-list { display: grid; gap: 8px; margin: 0 0 16px; padding: 0; list-style: none; }
+.more-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  color: #21163a;
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid #c8c2d8;
+  border-radius: 4px;
+}
+.more-link:hover, .more-link:focus-visible { border-color: #5639c4; background: #f4f0ff; }
+.more-text { display: grid; gap: 2px; min-width: 0; }
+.more-name { font-size: 13px; font-weight: 900; }
+.more-domain { overflow: hidden; color: #777087; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.more-empty { color: #777087; font-size: 12px; }
 .dialog-actions { display: flex; justify-content: end; gap: 9px; }
 .cancel-button { padding: 7px 10px; color: #21163a; background: white; border: 1px solid #c8c2d8; border-radius: 4px; font-size: 11px; font-weight: 800; }
 .text-panel { display: flex; flex-direction: column; width: min(920px, calc(100vw - 24px)); gap: 8px; }
@@ -395,28 +411,32 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .search-wrap { width: 125px; }
   #game-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 650px) {
-  .topbar { top: 7px; right: 7px; left: 7px; justify-content: space-between; flex-wrap: wrap; max-width: none; transform: none; }
+/* Barra do topo em três linhas (marca, busca, botões) quando a tela é estreita. */
+@media (max-width: 820px) {
+  .topbar { top: 7px; right: 7px; left: 7px; justify-content: space-between; flex-wrap: wrap; max-width: none; gap: 6px; transform: none; }
   .brand-mark { width: 28px; height: 28px; }
   .toolbar-count { padding-right: 0; border-right: 0; font-size: 11px; }
-  /* Três linhas: marca + contador + "Restaurar", depois a busca inteira, depois os botões.
+  /* Linha 1: marca + contador + "Mais jogos" + "Restaurar"; linha 2: busca; linha 3: botões.
      "display: contents" solta os filhos de .topbar-actions para o "order" poder reorganizá-los. */
-  .topbar { gap: 6px; }
   .topbar-actions { display: contents; }
   .brand { order: 1; }
   .toolbar-count { order: 2; margin-right: auto; }
-  .reset-button { order: 3; }
-  .search-wrap { order: 4; flex: 1 0 100%; width: auto; height: 36px; }
-  .add-button { order: 5; }
-  .text-button { order: 6; }
-  .filter-button { order: 7; }
+  #more-toggle { order: 3; }
+  .reset-button { order: 4; }
+  .search-wrap { order: 5; flex: 1 0 100%; width: auto; height: 36px; }
+  .add-button { order: 6; }
+  #text-toggle { order: 7; }
+  .filter-button { order: 8; }
   .add-button, .text-button, .filter-button { padding: 8px 10px; font-size: 11px; }
+  .text-panel, .add-panel { top: var(--topbar-space); max-height: calc(100dvh - var(--topbar-space) - 10px); }
+}
+@media (max-width: 650px) {
   .page-shell { padding-right: 9px; padding-left: 9px; }
   .tile-label { white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; min-height: 2.6em; overflow: hidden; }
   #game-form { grid-template-columns: 1fr; }
   .form-footer { align-items: stretch; flex-direction: column; }
   .form-footer p { max-width: none; }
-  .text-panel, .add-panel { padding: 12px; top: var(--topbar-space); max-height: calc(100dvh - var(--topbar-space) - 10px); }
+  .text-panel, .add-panel { padding: 12px; }
   /* 16px evita que o iPhone dê zoom automático ao tocar num campo de texto. */
   .search-wrap input, #game-form input, #code-editor { font-size: 16px; }
   #code-editor { min-height: 220px; }
@@ -426,6 +446,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 @media (max-width: 390px) {
   /* Celulares estreitos (360px): botões um pouco mais justos para os três caberem na mesma linha. */
   .add-button, .text-button, .filter-button { padding: 8px; }
+  #more-toggle { padding: 6px 8px; }
 }
 @media (hover: none) {
   .tile-actions { opacity: 1; pointer-events: auto; }
