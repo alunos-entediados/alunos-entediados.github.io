@@ -344,6 +344,15 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .optional { color: #777087; font-weight: 500; }
 #game-form .check-field { grid-column: 1 / -1; display: flex; align-items: center; gap: 9px; font-size: 12px; cursor: pointer; }
 #game-form input[type="checkbox"] { flex: none; width: 18px; height: 18px; padding: 0; accent-color: #d72e52; cursor: pointer; }
+/* Editor de "mais de um site": uma linha por site (nome, endereço, bloqueado, remover). */
+.sites-editor { grid-column: 1 / -1; display: grid; gap: 8px; padding: 10px; background: #f4f0ff; border: 1px solid #d9d1f2; border-radius: 4px; }
+.sites-list { display: grid; gap: 8px; }
+.site-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) auto auto; align-items: center; gap: 8px; }
+#game-form .site-blocked { display: flex; align-items: center; gap: 6px; font-size: 12px; white-space: nowrap; cursor: pointer; }
+.site-remove { width: 31px; height: 31px; padding: 0; color: #fff; background: #d72e52; border: 1px solid #fff; border-radius: 4px; font-size: 18px; line-height: 1; }
+.site-remove:disabled { opacity: .35; cursor: not-allowed; }
+.add-site-button { justify-self: start; padding: 7px 10px; color: #21163a; background: #fff; border: 1px dashed #5639c4; border-radius: 4px; font-size: 12px; font-weight: 800; }
+.add-site-button:hover { background: #eee9ff; }
 .form-footer { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-top: 2px; }
 .form-footer p { max-width: 75%; margin: 0; color: #777087; font-size: 11px; line-height: 1.45; }
 .save-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
@@ -437,6 +446,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .form-footer { align-items: stretch; flex-direction: column; }
   .form-footer p { max-width: none; }
   .text-panel, .add-panel { padding: 12px; }
+  .site-row { grid-template-columns: minmax(0, 1fr) auto; }
+  .site-row .site-name, .site-row .site-url { grid-column: 1 / -1; }
   /* 16px evita que o iPhone dê zoom automático ao tocar num campo de texto. */
   .search-wrap input, #game-form input, #code-editor { font-size: 16px; }
   #code-editor { min-height: 220px; }

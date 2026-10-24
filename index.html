@@ -54,7 +54,7 @@
           Nome do site
           <input id="game-name" name="name" type="text" maxlength="64" placeholder="Ex.: Meu jogo favorito" required>
         </label>
-        <label>
+        <label id="url-field">
           Endereço do site
           <input id="game-url" name="url" type="url" placeholder="https://exemplo.com" required>
         </label>
@@ -66,10 +66,18 @@
           Cor de fundo
           <input id="game-color" name="color" type="color" value="#ffd85a">
         </label>
-        <label class="check-field">
+        <label id="blocked-field" class="check-field">
           <input id="game-blocked" name="blocked" type="checkbox">
           <span>Bloqueado pelo firewall <span class="optional">(a rede não deixa abrir este site)</span></span>
         </label>
+        <label class="check-field">
+          <input id="game-multi" type="checkbox">
+          <span>Este jogo tem mais de um site <span class="optional">(quem clicar escolhe em qual jogar)</span></span>
+        </label>
+        <div id="sites-editor" class="sites-editor" hidden>
+          <div id="sites-list" class="sites-list"></div>
+          <button id="add-site" class="add-site-button" type="button">＋ Adicionar outro site</button>
+        </div>
         <div class="form-footer">
           <p id="icon-help">Em branco: o site usa img/NOME DO JOGO.png, se existir; senão, o desenho padrão. PNG/WebP transparentes mostram a cor de fundo.</p>
           <button id="form-submit" class="save-button" type="submit">Adicionar <span aria-hidden="true">↗</span></button>
@@ -113,6 +121,17 @@
       <ul id="more-list" class="more-list"></ul>
       <div class="dialog-actions">
         <button class="cancel-button" value="close">Fechar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="choose-dialog" class="confirm-dialog more-dialog" aria-labelledby="choose-title">
+    <form method="dialog">
+      <h2 id="choose-title">Onde você quer jogar?</h2>
+      <p>Sites que rodam <strong id="choose-game"></strong>:</p>
+      <ul id="choose-list" class="more-list"></ul>
+      <div class="dialog-actions">
+        <button class="cancel-button" value="close">Cancelar</button>
       </div>
     </form>
   </dialog>

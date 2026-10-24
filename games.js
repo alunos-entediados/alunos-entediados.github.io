@@ -11,14 +11,43 @@ const DEFAULT_GAMES = [
     "url": "https://eaglercraft.com/play?version=1.8.8",
     "icon": "https://cdn2.steamgriddb.com/icon/bfbe6b2f89c40bfc99a3c1183b7bdbf4/32/256x256.png",
     "color": "#289d46",
-    "blocked": true
+    "blocked": false,
+    "sites": [
+      {
+        "name": "Eaglercraft",
+        "url": "https://eaglercraft.com/play?version=1.8.8",
+        "blocked": true
+      },
+      {
+        "name": "Lemon Web",
+        "url": "https://www.lemon-web.net/applications/lemon-web-games#minecraft",
+        "blocked": false
+      },
+      {
+        "name": "Minecraft Web Client",
+        "url": "https://mcraft.fun/",
+        "blocked": true
+      }
+    ]
   },
   {
     "name": "GTA Vice City",
     "url": "https://gtavc.armdev.cn/",
     "icon": "https://cdn2.steamgriddb.com/icon/722caafb4825ef5d8670710fa29087cf/32/256x256.png",
     "color": "#f9a7b0",
-    "blocked": false
+    "blocked": false,
+    "sites": [
+      {
+        "name": "armdev",
+        "url": "https://gtavc.armdev.cn/",
+        "blocked": false
+      },
+      {
+        "name": "Jon code official",
+        "url": "https://joncodeofficial.github.io/gta-vice-city-wasm/",
+        "blocked": false
+      }
+    ]
   },
   {
     "name": "FEZ",

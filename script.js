@@ -70,6 +70,15 @@ const resetButton = document.querySelector('#reset-button');
 const confirmReset = document.querySelector('#confirm-reset');
 const hideBlockedToggle = document.querySelector('#hide-blocked-toggle');
 const gameBlockedInput = document.querySelector('#game-blocked');
+const urlField = document.querySelector('#url-field');
+const blockedField = document.querySelector('#blocked-field');
+const multiInput = document.querySelector('#game-multi');
+const sitesEditor = document.querySelector('#sites-editor');
+const sitesList = document.querySelector('#sites-list');
+const addSiteButton = document.querySelector('#add-site');
+const chooseDialog = document.querySelector('#choose-dialog');
+const chooseGame = document.querySelector('#choose-game');
+const chooseList = document.querySelector('#choose-list');
 const EMPTY_DEFAULT_TEXT = emptyState.querySelector('p').textContent;
 
 let editingId = null;
@@ -82,7 +91,8 @@ let visibleGames = []; // o que está aparecendo agora (depende da busca)
 // Dados: carregar, salvar e validar
 // ---------------------------------------------------------------------------
 function isValidGame(game) {
-  return Boolean(game && typeof game.name === 'string' && typeof game.url === 'string');
+  return Boolean(game && typeof game.name === 'string' &&
+    (typeof game.url === 'string' || (Array.isArray(game.sites) && game.sites.length > 0)));
 }
 
 function normalizeHexColor(value, fallback = '#ffd85a') {
@@ -110,15 +120,51 @@ function legacyBlocked(url) {
   return Boolean(match && match.blocked === true);
 }
 
+// Um jogo pode rodar em vários sites. Nesse caso ele tem a lista "sites" (com 2 ou mais itens,
+// cada um com nome, endereço e se o firewall bloqueia). Sem "sites", é um jogo comum de um site só.
+// Para o resto do código, "url" é o endereço do primeiro site e "blocked" só é true
+// se TODOS os sites do jogo forem bloqueados (aí o quadradinho some em "Ocultar bloqueados").
+function cleanSites(rawSites) {
+  if (!Array.isArray(rawSites)) return [];
+  return rawSites
+    .map((site) => {
+      const url = site ? safeHttpUrl(site.url) : null;
+      const name = site && typeof site.name === 'string' ? site.name.trim().slice(0, 64) : '';
+      return { name: name || (url ? getDomain(url) : ''), url, blocked: Boolean(site && site.blocked === true) };
+    })
+    .filter((site) => site.url);
+}
+
+function isMultiSite(game) {
+  return Array.isArray(game.sites) && game.sites.length > 1;
+}
+
+// Lista de sites do jogo (um jogo comum conta como um jogo com um site).
+function getGameSites(game) {
+  return isMultiSite(game) ? game.sites : [{ name: game.name, url: game.url, blocked: Boolean(game.blocked) }];
+}
+
+// Os sites que podem ser usados agora (com "Ocultar bloqueados" ligado, os bloqueados saem).
+function getAvailableSites(game) {
+  return getGameSites(game).filter((site) => !(hideBlocked && site.blocked));
+}
+
 function normalizeLoadedGame(game, index, prefix = 'default') {
-  return {
+  const sites = cleanSites(game.sites);
+  const base = {
     id: typeof game.id === 'string' && game.id ? game.id : `${prefix}-${index + 1}`,
     name: game.name,
-    url: game.url,
     icon: typeof game.icon === 'string' && game.icon.trim().toLowerCase() !== 'imglocal' ? game.icon : '',
-    color: getTileColor(game, index),
-    blocked: typeof game.blocked === 'boolean' ? game.blocked : legacyBlocked(game.url)
+    color: getTileColor(game, index)
   };
+  if (sites.length > 1) {
+    return { ...base, url: sites[0].url, blocked: sites.every((site) => site.blocked), sites };
+  }
+  const url = sites.length === 1 ? sites[0].url : game.url;
+  const blocked = sites.length === 1
+    ? sites[0].blocked
+    : (typeof game.blocked === 'boolean' ? game.blocked : legacyBlocked(game.url));
+  return { ...base, url, blocked };
 }
 
 function loadDefaultGames() {
@@ -202,11 +248,20 @@ function createGameCard(game, index) {
   const link = document.createElement('a');
   link.className = 'game-card';
   link.draggable = false; // senão o navegador arrasta o link em vez do quadradinho
-  link.href = game.url;
+  const multi = isMultiSite(game);
+  link.href = (getAvailableSites(game)[0] || { url: game.url }).url; // vale para Ctrl+clique / clique do meio
   link.target = '_blank';
   link.rel = 'noopener noreferrer';
-  link.title = `${game.name} — ${getDomain(game.url)}`;
-  link.setAttribute('aria-label', `Abrir ${game.name} em uma nova aba`);
+  link.title = multi ? `${game.name} — ${game.sites.length} sites` : `${game.name} — ${getDomain(game.url)}`;
+  link.setAttribute('aria-label', multi ? `Abrir ${game.name} (escolher o site)` : `Abrir ${game.name} em uma nova aba`);
+  if (multi) {
+    // Clique normal: abre direto se só um site estiver disponível; senão pergunta qual.
+    link.addEventListener('click', (event) => {
+      if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      openGame(game);
+    });
+  }
 
   const art = document.createElement('div');
   art.className = 'tile-art';
@@ -285,6 +340,46 @@ function createPlaceholder(name) {
   placeholder.textContent = getInitials(name);
   return placeholder;
 }
+
+// Abre o jogo: um site só (ou só um disponível) abre direto; vários, pergunta em qual.
+function openGame(game) {
+  const available = getAvailableSites(game);
+  if (available.length === 0) return;
+  if (available.length === 1) {
+    window.open(available[0].url, '_blank', 'noopener,noreferrer');
+    return;
+  }
+  chooseGame.textContent = game.name;
+  chooseList.replaceChildren();
+  for (const site of available) {
+    const item = document.createElement('li');
+    const link = document.createElement('a');
+    link.className = 'more-link';
+    link.href = site.url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    const text = document.createElement('span');
+    text.className = 'more-text';
+    const name = document.createElement('span');
+    name.className = 'more-name';
+    name.textContent = site.name;
+    const domain = document.createElement('span');
+    domain.className = 'more-domain';
+    domain.textContent = getDomain(site.url);
+    text.append(name, domain);
+    const arrow = document.createElement('span');
+    arrow.setAttribute('aria-hidden', 'true');
+    arrow.textContent = '↗';
+    link.append(text, arrow);
+    link.addEventListener('click', () => chooseDialog.close()); // o link abre a nova aba sozinho
+    item.append(link);
+    chooseList.append(item);
+  }
+  chooseDialog.showModal();
+}
+chooseDialog.addEventListener('click', (event) => {
+  if (event.target === chooseDialog) chooseDialog.close(); // clicar no fundo escuro fecha
+});
 
 function renderGames({ animate = false } = {}) {
   const query = normalizeText(searchInput.value.trim());
@@ -394,6 +489,7 @@ function openAddPanel() {
   closeTextPanel();
   editingId = null;
   gameForm.reset();
+  resetSitesEditor();
   formTitle.textContent = 'Adicionar um quadradinho';
   formSubmit.innerHTML = 'Adicionar <span aria-hidden="true">↗</span>';
   gameColorInput.value = COLORS[games.length % COLORS.length];
@@ -415,11 +511,121 @@ function openEditPanel(id) {
   gameIconInput.value = game.icon || '';
   gameColorInput.value = getTileColor(game, games.indexOf(game));
   gameBlockedInput.checked = Boolean(game.blocked);
+  if (isMultiSite(game)) {
+    multiInput.checked = true;
+    renderSiteRows(game.sites);
+    setMultiMode(true);
+  } else {
+    resetSitesEditor();
+  }
   showFormMessage('');
   addPanel.hidden = false;
   addToggle.setAttribute('aria-expanded', 'true');
   gameNameInput.focus();
 }
+
+// --- Editor de "mais de um site" dentro do formulário ---
+function updateSiteRows() {
+  const rows = [...sitesList.children];
+  rows.forEach((row, index) => {
+    row.querySelector('.site-name').setAttribute('aria-label', `Nome do site ${index + 1}`);
+    row.querySelector('.site-url').setAttribute('aria-label', `Endereço do site ${index + 1}`);
+    const remove = row.querySelector('.site-remove');
+    remove.setAttribute('aria-label', `Remover o site ${index + 1}`);
+    remove.disabled = rows.length <= 2; // com "mais de um site", o mínimo são 2
+  });
+}
+
+function addSiteRow(site = {}) {
+  const row = document.createElement('div');
+  row.className = 'site-row';
+
+  const name = document.createElement('input');
+  name.className = 'site-name';
+  name.type = 'text';
+  name.maxLength = 64;
+  name.required = true;
+  name.placeholder = 'Nome do site (ex.: Lemon Web)';
+  name.value = site.name || '';
+
+  const url = document.createElement('input');
+  url.className = 'site-url';
+  url.type = 'url';
+  url.required = true;
+  url.placeholder = 'https://exemplo.com';
+  url.value = site.url || '';
+
+  const blockedLabel = document.createElement('label');
+  blockedLabel.className = 'site-blocked';
+  const blockedBox = document.createElement('input');
+  blockedBox.type = 'checkbox';
+  blockedBox.checked = Boolean(site.blocked);
+  blockedLabel.append(blockedBox, ' Bloqueado');
+
+  const remove = document.createElement('button');
+  remove.className = 'site-remove';
+  remove.type = 'button';
+  remove.textContent = '×';
+  remove.title = 'Remover este site';
+  remove.addEventListener('click', () => {
+    if (sitesList.children.length <= 2) return;
+    row.remove();
+    updateSiteRows();
+  });
+
+  row.append(name, url, blockedLabel, remove);
+  sitesList.append(row);
+  updateSiteRows();
+  return row;
+}
+
+function renderSiteRows(sites) {
+  sitesList.replaceChildren();
+  sites.forEach((site) => addSiteRow(site));
+  while (sitesList.children.length < 2) addSiteRow();
+}
+
+function readSiteRows() {
+  return [...sitesList.children].map((row) => ({
+    name: row.querySelector('.site-name').value,
+    url: row.querySelector('.site-url').value,
+    blocked: row.querySelector('.site-blocked input').checked
+  }));
+}
+
+// Liga/desliga o modo "mais de um site": esconde o endereço único e mostra a lista.
+function setMultiMode(on) {
+  sitesEditor.hidden = !on;
+  urlField.hidden = on;
+  blockedField.hidden = on;
+  gameUrlInput.required = !on; // campo escondido e obrigatório travaria o envio do formulário
+}
+
+function resetSitesEditor() {
+  multiInput.checked = false;
+  sitesList.replaceChildren();
+  setMultiMode(false);
+}
+
+multiInput.addEventListener('change', () => {
+  if (multiInput.checked) {
+    // O endereço e o "bloqueado" já digitados viram o primeiro site da lista.
+    renderSiteRows([{ name: '', url: gameUrlInput.value.trim(), blocked: gameBlockedInput.checked }]);
+    setMultiMode(true);
+  } else {
+    const [first] = readSiteRows();
+    if (first) {
+      gameUrlInput.value = first.url;
+      gameBlockedInput.checked = first.blocked;
+    }
+    sitesList.replaceChildren();
+    setMultiMode(false);
+  }
+});
+
+addSiteButton.addEventListener('click', () => {
+  addSiteRow().querySelector('.site-name').focus();
+});
 
 function closeAddPanel() {
   addPanel.hidden = true;
@@ -469,7 +675,8 @@ function gamesAsJavaScript() {
     url: game.url,
     icon: game.icon || '',
     color: getTileColor(game, index),
-    blocked: Boolean(game.blocked)
+    blocked: Boolean(game.blocked),
+    ...(isMultiSite(game) ? { sites: game.sites.map((site) => ({ name: site.name, url: site.url, blocked: site.blocked })) } : {})
   }));
   // JSON é também uma sintaxe válida dentro de uma declaração JavaScript.
   return `const DEFAULT_GAMES = ${JSON.stringify(defaults, null, 2)};`;
@@ -500,12 +707,35 @@ function readGamesFromCode(source) {
     const name = typeof entry.name === 'string' ? entry.name.trim() : '';
     if (!name) throw new Error(`O item ${index + 1} precisa ter um nome.`);
     if (name.length > 64) throw new Error(`O nome do item ${index + 1} passa de 64 caracteres.`);
-    const url = safeHttpUrl(entry.url);
-    if (!url) throw new Error(`O endereço do item ${index + 1} precisa começar com http:// ou https://.`);
+    let url;
+    let sites = null;
+    if (entry.sites !== undefined) {
+      // Jogo com mais de um site: o endereço e o "blocked" do jogo vêm da lista.
+      if (!Array.isArray(entry.sites) || entry.sites.length < 2) {
+        throw new Error(`O campo "sites" do item ${index + 1} precisa ser uma lista com pelo menos 2 sites.`);
+      }
+      sites = entry.sites.map((site, siteIndex) => {
+        const where = `O site ${siteIndex + 1} do item ${index + 1}`;
+        if (!site || typeof site !== 'object' || Array.isArray(site)) throw new Error(`${where} não é um objeto válido.`);
+        const siteName = typeof site.name === 'string' ? site.name.trim() : '';
+        if (!siteName) throw new Error(`${where} precisa ter um nome.`);
+        if (siteName.length > 64) throw new Error(`${where} tem nome com mais de 64 caracteres.`);
+        const siteUrl = safeHttpUrl(site.url);
+        if (!siteUrl) throw new Error(`${where} precisa ter um endereço começando com http:// ou https://.`);
+        if (site.blocked !== undefined && typeof site.blocked !== 'boolean') {
+          throw new Error(`O campo "blocked" do site ${siteIndex + 1} do item ${index + 1} precisa ser true ou false (sem aspas).`);
+        }
+        return { name: siteName, url: siteUrl, blocked: site.blocked === true };
+      });
+      url = sites[0].url;
+    } else {
+      url = safeHttpUrl(entry.url);
+      if (!url) throw new Error(`O endereço do item ${index + 1} precisa começar com http:// ou https://.`);
+    }
     const icon = safeHttpUrl(entry.icon, true);
     if (icon === null) throw new Error(`O ícone do item ${index + 1} precisa ser uma URL válida ou uma string vazia.`);
     const color = normalizeHexColor(entry.color, COLORS[index % COLORS.length]);
-    if (entry.blocked !== undefined && typeof entry.blocked !== 'boolean') {
+    if (!sites && entry.blocked !== undefined && typeof entry.blocked !== 'boolean') {
       throw new Error(`O campo "blocked" do item ${index + 1} precisa ser true ou false (sem aspas).`);
     }
     return {
@@ -514,7 +744,8 @@ function readGamesFromCode(source) {
       url,
       icon,
       color,
-      blocked: entry.blocked === true
+      blocked: sites ? sites.every((site) => site.blocked) : entry.blocked === true,
+      ...(sites ? { sites } : {})
     };
   });
 }
@@ -588,32 +819,60 @@ codeEditor.addEventListener('input', () => showTextMessage(''));
 gameForm.addEventListener('submit', (event) => {
   event.preventDefault();
   const name = gameNameInput.value.trim();
-  const url = safeHttpUrl(gameUrlInput.value);
   const iconInput = gameIconInput.value.trim();
   const icon = safeHttpUrl(iconInput, true);
   const color = normalizeHexColor(gameColorInput.value, COLORS[games.length % COLORS.length]);
-  const blocked = gameBlockedInput.checked;
 
   if (!name) return showFormMessage('Digite um nome para o site.', true);
   if (name.length > 64) return showFormMessage('O nome pode ter no máximo 64 caracteres.', true);
-  if (!url) return showFormMessage('Digite um endereço válido começando com http:// ou https://.', true);
   if (icon === null) return showFormMessage('O endereço do ícone precisa ser uma URL válida ou ficar vazio.', true);
 
+  let url;
+  let blocked;
+  let sites = null; // só existe quando "mais de um site" está marcado
+  if (multiInput.checked) {
+    const rows = readSiteRows();
+    if (rows.length < 2) return showFormMessage('Coloque pelo menos dois sites ou desmarque “mais de um site”.', true);
+    const seen = new Set();
+    sites = [];
+    for (const [index, row] of rows.entries()) {
+      const siteName = row.name.trim();
+      const siteUrl = safeHttpUrl(row.url);
+      if (!siteName) return showFormMessage(`Digite o nome do site ${index + 1}.`, true);
+      if (siteName.length > 64) return showFormMessage(`O nome do site ${index + 1} passa de 64 caracteres.`, true);
+      if (!siteUrl) return showFormMessage(`O endereço do site ${index + 1} precisa começar com http:// ou https://.`, true);
+      if (seen.has(urlKey(siteUrl))) return showFormMessage(`O site ${index + 1} repete um endereço já usado neste jogo.`, true);
+      seen.add(urlKey(siteUrl));
+      sites.push({ name: siteName, url: siteUrl, blocked: row.blocked });
+    }
+    url = sites[0].url;
+    blocked = sites.every((site) => site.blocked);
+  } else {
+    url = safeHttpUrl(gameUrlInput.value);
+    if (!url) return showFormMessage('Digite um endereço válido começando com http:// ou https://.', true);
+    blocked = gameBlockedInput.checked;
+  }
+
   const normalizedName = name.toLocaleLowerCase('pt-BR');
-  const normalizedUrl = url.replace(/\/$/, '').toLocaleLowerCase('pt-BR');
+  const newKeys = (sites || [{ url }]).map((site) => urlKey(site.url));
   const duplicate = games.some((game) => {
     if (editingId && game.id === editingId) return false;
     return game.name.toLocaleLowerCase('pt-BR') === normalizedName ||
-      game.url.replace(/\/$/, '').toLocaleLowerCase('pt-BR') === normalizedUrl;
+      getGameSites(game).some((site) => newKeys.includes(urlKey(site.url)));
   });
   if (duplicate) return showFormMessage('Esse nome ou endereço já está na coleção.', true);
 
   const previous = games;
+  const sitesPart = sites ? { sites } : {};
 
   if (editingId) {
     const index = games.findIndex((game) => game.id === editingId);
     if (index < 0) return showFormMessage('Este quadradinho não foi encontrado. Feche e tente novamente.', true);
-    games = games.map((game, i) => (i === index ? { ...game, name, url, icon, color, blocked } : game));
+    games = games.map((game, i) => {
+      if (i !== index) return game;
+      const { sites: oldSites, ...rest } = game; // tira os sites antigos; os novos (se houver) entram abaixo
+      return { ...rest, name, url, icon, color, blocked, ...sitesPart };
+    });
     if (!saveGames()) {
       games = previous;
       return showFormMessage(SAVE_ERROR, true);
@@ -629,13 +888,15 @@ gameForm.addEventListener('submit', (event) => {
     url,
     icon,
     color,
-    blocked
+    blocked,
+    ...sitesPart
   }];
   if (!saveGames()) {
     games = previous;
     return showFormMessage(SAVE_ERROR, true);
   }
   gameForm.reset();
+  resetSitesEditor();
   gameColorInput.value = COLORS[games.length % COLORS.length];
   searchInput.value = '';
   renderGames();
@@ -824,7 +1085,7 @@ moreDialog.addEventListener('click', (event) => {
 
 // Atalhos de teclado: "/" vai para a busca, Esc fecha painéis, Enter na busca abre o primeiro resultado.
 document.addEventListener('keydown', (event) => {
-  if (resetDialog.open || moreDialog.open) return; // o próprio <dialog> já fecha com Esc
+  if (resetDialog.open || moreDialog.open || chooseDialog.open) return; // o próprio <dialog> já fecha com Esc
 
   if (event.key === 'Escape') {
     if (!addPanel.hidden) { closeAddPanel(); addToggle.focus(); }
@@ -842,7 +1103,7 @@ document.addEventListener('keydown', (event) => {
 
 searchInput.addEventListener('keydown', (event) => {
   if (event.key === 'Enter' && searchInput.value.trim() && visibleGames[0]) {
-    window.open(visibleGames[0].url, '_blank', 'noopener,noreferrer');
+    openGame(visibleGames[0]);
   } else if (event.key === 'Escape' && searchInput.value) {
     // Primeiro Esc limpa a busca; o segundo (já vazia) fecha painéis.
     searchInput.value = '';
