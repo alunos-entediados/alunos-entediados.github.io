@@ -111,6 +111,20 @@ const DEFAULT_GAMES = [
     "blocked": true
   },
   {
+    "name": "Angry Birds",
+    "url": "https://www.lemon-web.net/applications/lemon-web-games#angrybirds1",
+    "icon": "https://cdn2.steamgriddb.com/grid/3fcae317ba710d9244c32114787900f0.png",
+    "color": "#b6caff",
+    "blocked": false
+  },
+  {
+    "name": "Angry Birds 2",
+    "url": "https://www.lemon-web.net/applications/lemon-web-games#angrybirds2",
+    "icon": "https://cdn2.steamgriddb.com/grid/846ee6794d5769ddc572de209cb5bd55.png",
+    "color": "#a6f1ff",
+    "blocked": false
+  },
+  {
     "name": "Plants vs Zombies 2",
     "url": "https://www.lemon-web.net/html5games/plantsvszombies2/",
     "icon": "https://cdn2.steamgriddb.com/grid/4ba272145611642a7e1502a6b0272547.png",
