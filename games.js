@@ -31,6 +31,13 @@ const DEFAULT_GAMES = [
     ]
   },
   {
+    "name": "GTA V",
+    "url": "https://www.lemon-web.net/html5games/grandtheftauto5/",
+    "icon": "https://cdn2.steamgriddb.com/grid/d2564438802df90e3128b9f5837120a8.jpg",
+    "color": "#00ae1f",
+    "blocked": false
+  },
+  {
     "name": "GTA Vice City",
     "url": "https://gtavc.armdev.cn/",
     "icon": "https://cdn2.steamgriddb.com/icon/722caafb4825ef5d8670710fa29087cf/32/256x256.png",
@@ -85,6 +92,34 @@ const DEFAULT_GAMES = [
     "blocked": true
   },
   {
+    "name": "Neo Bomberman",
+    "url": "https://www.lemon-web.net/html5emujsv5/neobomberman/",
+    "icon": "https://cdn2.steamgriddb.com/grid/3e2a7b6e0016c98ebe8dbebef548b012.jpg",
+    "color": "#c8b6ff",
+    "blocked": false
+  },
+  {
+    "name": "Halo",
+    "url": "https://openhaloce.com/",
+    "icon": "https://cdn2.steamgriddb.com/grid/44ffb6f94b5ec5366ba0f896f7f0f680.png",
+    "color": "#57e389",
+    "blocked": false
+  },
+  {
+    "name": "Raft",
+    "url": "https://www.lemon-web.net/applications/lemon-web-games#raft",
+    "icon": "https://cdn2.steamgriddb.com/grid/bebc7316421091b68a5fb3c0747e9bf1.jpg",
+    "color": "#41b0b4",
+    "blocked": false
+  },
+  {
+    "name": "GeoGuessr",
+    "url": "https://www.geoguessr.com/pt",
+    "icon": "https://cdn2.steamgriddb.com/icon/02c1ffbf4378893da347eb8ec50b2456.png",
+    "color": "#9fd8ff",
+    "blocked": false
+  },
+  {
     "name": "Border War",
     "url": "https://borderwar.io/",
     "icon": "",
@@ -106,25 +141,11 @@ const DEFAULT_GAMES = [
     "blocked": false
   },
   {
-    "name": "GeoGuessr",
-    "url": "https://www.geoguessr.com/pt",
-    "icon": "https://cdn2.steamgriddb.com/icon/02c1ffbf4378893da347eb8ec50b2456.png",
-    "color": "#9fd8ff",
-    "blocked": false
-  },
-  {
     "name": "The Simpsons: Hit & Run",
     "url": "https://shar-wasm.cjoseph.workers.dev/",
     "icon": "https://cdn2.steamgriddb.com/icon/61603780b437fb53aceb2563ccce02a4.png",
     "color": "#f9f06b",
     "blocked": true
-  },
-  {
-    "name": "Halo",
-    "url": "https://openhaloce.com/",
-    "icon": "https://cdn2.steamgriddb.com/grid/44ffb6f94b5ec5366ba0f896f7f0f680.png",
-    "color": "#57e389",
-    "blocked": false
   },
   {
     "name": "Doodle Shooter",
@@ -139,13 +160,6 @@ const DEFAULT_GAMES = [
     "icon": "https://cdn2.steamgriddb.com/grid/e5494d23b18b5c822bcaa9fe8fd077bf.jpg",
     "color": "#f66151",
     "blocked": true
-  },
-  {
-    "name": "Raft",
-    "url": "https://www.lemon-web.net/applications/lemon-web-games#raft",
-    "icon": "https://cdn2.steamgriddb.com/grid/bebc7316421091b68a5fb3c0747e9bf1.jpg",
-    "color": "#41b0b4",
-    "blocked": false
   },
   {
     "name": "PEAK",
